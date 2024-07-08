@@ -1,0 +1,17 @@
+[versions]
+guava = "33.2.1-jre"
+hoplite = "2.7.5"
+mc-debug-renderer = "1.20.4.rv1"
+minestom = "982233141e"
+minimessage = "4.17.0"
+
+[libraries]
+debugRenderer = { group = "com.github.mworzala.mc_debug_renderer", name = "minestom", version.ref = "mc-debug-renderer" }
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+hoplite = { group = "com.sksamuel.hoplite", name = "hoplite-core", version.ref = "hoplite" }
+hoplite-yaml = { group = "com.sksamuel.hoplite", name = "hoplite-yaml", version.ref = "hoplite" }
+minestom = { group = "com.github.Minestom", name = "Minestom", version.ref = "minestom" }
+minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "minimessage" }
+
+[bundles]
+hoplite = ["hoplite", "hoplite-yaml"]
