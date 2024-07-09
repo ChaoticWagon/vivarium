@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.minimessage)
     implementation(kotlin("stdlib-jdk8"))
+
 }
 
 tasks {
