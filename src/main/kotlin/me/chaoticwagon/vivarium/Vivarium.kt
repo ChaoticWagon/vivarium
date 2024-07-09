@@ -1,5 +1,7 @@
 package me.chaoticwagon.vivarium
 
+import me.chaoticwagon.vivarium.calendar.DayCycle
+import me.chaoticwagon.vivarium.calendar.TickCalendar
 import me.chaoticwagon.vivarium.instance.GameInstance
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
@@ -19,6 +21,7 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
 
     val playerEventNode = EventNode.type("player-listener", EventFilter.PLAYER)
     val scheduler = MinecraftServer.getSchedulerManager()
+    lateinit var dayCycle: DayCycle // This is probably bad but im lazy
 
     fun start() {
         val instanceManager = MinecraftServer.getInstanceManager()
@@ -31,6 +34,7 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
             unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK)
         }
 
+        dayCycle = DayCycle(instance)
         registerListeners(instance)
         registerCommands()
 
@@ -47,6 +51,8 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
         }
 
         val instanceEventNode = EventNode.type("instance-listener", EventFilter.INSTANCE)
+
+        instanceEventNode.addListener(TickCalendar(dayCycle))
 
         globalEventHandler.addChild(instanceEventNode)
         globalEventHandler.addChild(playerEventNode)
