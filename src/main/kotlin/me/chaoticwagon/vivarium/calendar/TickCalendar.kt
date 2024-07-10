@@ -15,10 +15,6 @@ class TickCalendar(private val dayCycle: DayCycle) : EventListener<InstanceTickE
         // Tick calendar
         tickCalendar(dayCycle.calendar, dayCycle.multiplier)
 
-        event.instance.players.forEach {
-            it.sendMessage(dayCycle.calendar.get(Calendar.HOUR_OF_DAY).toString())
-        }
-
 //        instance.time += 1
 
         return EventListener.Result.SUCCESS
