@@ -5,6 +5,7 @@ import me.chaoticwagon.vivarium.calendar.TickCalendar
 import me.chaoticwagon.vivarium.instance.GameInstance
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
+import net.minestom.server.entity.GameMode
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
@@ -24,6 +25,8 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
     val dayCycle: DayCycle // This is probably bad but im lazy
 
     init {
+        PacketInterceptor.init()
+
         val instanceManager = MinecraftServer.getInstanceManager()
 
         MojangAuth.init()
@@ -48,6 +51,8 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
             event.spawningInstance = instance
             player.permissionLevel = 4
             player.respawnPoint = Pos(0.0, 42.0, 0.0, 180.0f, 0.0f)
+            player.gameMode = GameMode.CREATIVE
+            instance.setBlock(Pos(0.0, 50.0, 0.0, 0.0f, 0.0f), Block.DIAMOND_BLOCK)
         }
 
         val instanceEventNode = EventNode.type("instance-listener", EventFilter.INSTANCE)

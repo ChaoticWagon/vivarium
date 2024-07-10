@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import java.io.ByteArrayOutputStream
 
 plugins {
+    java
     kotlin("jvm") version "2.0.0"
     id("io.github.goooler.shadow") version "8.1.7"
 }
@@ -26,6 +27,7 @@ dependencies {
     implementation(libs.debugRenderer)
 
     // Misc
+    implementation(libs.bundles.bytebuddy)
     implementation(libs.guava)
     implementation(libs.minimessage)
     implementation(kotlin("stdlib-jdk8"))
