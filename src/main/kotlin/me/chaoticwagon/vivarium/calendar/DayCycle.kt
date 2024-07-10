@@ -28,7 +28,7 @@ class DayCycle(private val instance: InstanceContainer) {
 
     private val secsSeason: Int = 7_776_000
     private val hoursPerSeason = 3
-    val multiplier = secsSeason / (hoursPerSeason * 10)
+    val multiplier = secsSeason / (hoursPerSeason * 3600)
 
     private var bossBar = BossBar.bossBar(
         Component.empty(),

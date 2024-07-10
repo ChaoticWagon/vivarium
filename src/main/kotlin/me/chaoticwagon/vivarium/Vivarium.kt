@@ -14,16 +14,16 @@ import net.minestom.server.instance.block.Block
 import net.minestom.server.instance.generator.GenerationUnit
 
 fun main() {
-    Vivarium(MinecraftServer.init()).start()
+    Vivarium(MinecraftServer.init())
 }
 
 class Vivarium(private val minecraftServer: MinecraftServer) {
 
     val playerEventNode = EventNode.type("player-listener", EventFilter.PLAYER)
     val scheduler = MinecraftServer.getSchedulerManager()
-    lateinit var dayCycle: DayCycle // This is probably bad but im lazy
+    val dayCycle: DayCycle // This is probably bad but im lazy
 
-    fun start() {
+    init {
         val instanceManager = MinecraftServer.getInstanceManager()
 
         MojangAuth.init()
