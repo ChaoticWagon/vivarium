@@ -14,6 +14,7 @@ import net.minestom.server.event.player.AsyncPlayerConfigurationEvent
 import net.minestom.server.extras.MojangAuth
 import net.minestom.server.instance.block.Block
 import net.minestom.server.instance.generator.GenerationUnit
+import kotlin.random.Random
 
 fun main() {
     Vivarium(MinecraftServer.init())
@@ -47,7 +48,8 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
         minecraftServer.start("0.0.0.0", 25565)
 
         for(i in -100..0) {
-            println(wrapNumber(i, -2, 2))
+            val rand = Random.nextDouble() * 10
+            println("$rand == ${wrapNumber(rand, -2.0, 2.0)}")
         }
     }
 

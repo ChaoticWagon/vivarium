@@ -8,8 +8,9 @@ import kotlin.math.abs
 import kotlin.math.floor
 
 fun Point.offsetByChunks(): Point {
-    val x = wrapNumber(this.x(), -2.0 * 16, 2.0 * 16)
-    val z = wrapNumber(this.z(), -2.0 * 16, 2.0 * 16)
+    val x = wrapNumber(this.x(), -2.0 * 16, 3.0 * 16)
+    val z = wrapNumber(this.z(), -2.0 * 16, 3.0 * 16)
+    println("(${this.x()}, ${this.z()}) -> $x, $z")
     return when (this) {
         is Pos -> Pos(x, this.y(), z, this.yaw, this.pitch)
         is Vec -> Vec(z, this.y(), z)
@@ -23,16 +24,19 @@ fun Point.negOffsetByChunks(): Point {
 }
 
 fun wrapNumber(value: Int, min: Int, max: Int): Int {
-    if (min <= value && value <= max) return value
+    if (value in min..max) return value
     val range_length = max - min + 1
     val normal = value - min
     val adjusted_val = abs(normal % range_length)
     return min + adjusted_val
 }
 fun wrapNumber(value: Double, min: Double, max: Double): Double {
-    if (min <= value && value <= max) return value
-    val range_length = max - min + 1
-    val normal = value - min
-    val adjusted_val = abs(normal % range_length)
-    return min + adjusted_val
+    val range: Double = max - min
+    val offset: Double = if (value < min) {
+        range
+    } else{
+        0.0
+    }
+    val base = (value - min) % range
+    return base + min + offset
 }
