@@ -3,6 +3,7 @@ package me.chaoticwagon.vivarium
 import me.chaoticwagon.vivarium.calendar.DayCycle
 import me.chaoticwagon.vivarium.calendar.TickCalendar
 import me.chaoticwagon.vivarium.instance.GameInstance
+import me.chaoticwagon.vivarium.util.wrapNumber
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.entity.GameMode
@@ -32,6 +33,8 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
         MojangAuth.init()
 
         val instance = GameInstance()
+        ClientboundPacketInterceptorKt.instance = instance
+        ServerboundPacketInterceptorKt.instance = instance
         instanceManager.registerInstance(instance)
         instance.setGenerator { unit: GenerationUnit ->
             unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK)
@@ -42,6 +45,10 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
         registerCommands()
 
         minecraftServer.start("0.0.0.0", 25565)
+
+        for(i in -100..0) {
+            println(wrapNumber(i, -2, 2))
+        }
     }
 
     private fun registerListeners(instance: GameInstance) {
@@ -52,6 +59,7 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
             player.permissionLevel = 4
             player.respawnPoint = Pos(0.0, 42.0, 0.0, 180.0f, 0.0f)
             player.gameMode = GameMode.CREATIVE
+//            WrappingChunkLoader(instance).schedule(player)
             instance.setBlock(Pos(0.0, 50.0, 0.0, 0.0f, 0.0f), Block.DIAMOND_BLOCK)
         }
 

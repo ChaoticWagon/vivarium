@@ -2,16 +2,20 @@
 
 package me.chaoticwagon.vivarium
 
+import me.chaoticwagon.vivarium.instance.GameInstance
 import me.chaoticwagon.vivarium.util.negOffsetByChunks
 import me.chaoticwagon.vivarium.util.offsetByChunks
+import me.chaoticwagon.vivarium.util.wrapNumber
 import net.bytebuddy.ByteBuddy
 import net.bytebuddy.agent.ByteBuddyAgent
 import net.bytebuddy.asm.Advice
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy
 import net.bytebuddy.matcher.ElementMatchers.named
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.network.PacketProcessor
 import net.minestom.server.network.packet.client.ClientPacket
-import net.minestom.server.network.packet.client.play.ClientPlayerBlockPlacementPacket
+import net.minestom.server.network.packet.client.play.ClientPlayerPositionAndRotationPacket
+import net.minestom.server.network.packet.client.play.ClientPlayerPositionPacket
 import net.minestom.server.network.packet.server.CachedPacket
 import net.minestom.server.network.packet.server.SendablePacket
 import net.minestom.server.network.packet.server.play.BlockChangePacket
@@ -38,6 +42,8 @@ object PacketInterceptor {
 }
 
 object ClientboundPacketInterceptorKt {
+    lateinit var instance: GameInstance
+
     fun sendPacket(
         connection: PlayerSocketConnection,
         packet: SendablePacket
@@ -48,24 +54,21 @@ object ClientboundPacketInterceptorKt {
             packet = packet.packet(connection.connectionState)
         }
 
-        val offset = if (connection.loginUsername.equals("Insprill")) {
-            1
-        } else {
-            -1
-        }
-
         packet = when (packet) {
             is ChunkDataPacket -> {
+                if (packet.chunkX == 0) {
+//                    println("${packet.chunkX},${packet.chunkZ} | ${wrapNumber(packet.chunkZ, -2, 2)}")
+                }
                 ChunkDataPacket(
-                    packet.chunkX() + offset,
-                    packet.chunkZ() + offset,
+                    wrapNumber(packet.chunkX, -2, 2).toInt(),
+                    wrapNumber(packet.chunkZ, -2, 2).toInt(),
                     packet.chunkData(),
                     packet.lightData()
                 )
             }
 
             is BlockChangePacket -> {
-                BlockChangePacket(packet.blockPosition().negOffsetByChunks(offset), packet.blockStateId())
+                BlockChangePacket(packet.blockPosition().negOffsetByChunks(), packet.blockStateId())
             }
 
             else -> packet
@@ -78,32 +81,43 @@ object ClientboundPacketInterceptorKt {
 internal object ServerboundPacketInterceptorKt {
     // LMFAO
     private var connections: HashMap<Thread, PlayerSocketConnection> = HashMap()
+    lateinit var instance: GameInstance
 
     fun process(connection: PlayerSocketConnection) {
         connections[Thread.currentThread()] = connection
     }
 
     fun create(packet: ClientPacket): ClientPacket {
-        val connection = connections[Thread.currentThread()] ?: return packet
-
-        val offset = if (connection.loginUsername.equals("Insprill")) {
-            1
-        } else {
-            -1
-        }
+        val thread = Thread.currentThread()
+        val connection = connections[thread] ?: return packet
+        connections.remove(thread)
+        val player = connection.player ?: return packet
 
         var packet = packet
-        if (packet is ClientPlayerBlockPlacementPacket) {
-            packet = ClientPlayerBlockPlacementPacket(
-                packet.hand(),
-                packet.blockPosition().offsetByChunks(offset),
-                packet.blockFace(),
-                packet.cursorPositionX() + (16 * offset),
-                packet.cursorPositionY(),
-                packet.cursorPositionZ() + (16 * offset),
-                packet.insideBlock(),
-                packet.sequence()
-            )
+        when (packet) {
+//            is ClientPlayerBlockPlacementPacket -> {
+//                packet = ClientPlayerBlockPlacementPacket(
+//                    packet.hand(),
+//                    packet.blockPosition().offsetByChunks(chunkOffset),
+//                    packet.blockFace(),
+//                    packet.cursorPositionX() + chunkOffset.first,
+//                    packet.cursorPositionY(),
+//                    packet.cursorPositionZ() + chunkOffset.second,
+//                    packet.insideBlock(),
+//                    packet.sequence()
+//                )
+//            }
+
+            is ClientPlayerPositionPacket -> {
+                packet = ClientPlayerPositionPacket(packet.position.offsetByChunks(), packet.onGround)
+            }
+
+            is ClientPlayerPositionAndRotationPacket -> {
+                packet = ClientPlayerPositionAndRotationPacket(
+                    packet.position.offsetByChunks() as Pos,
+                    packet.onGround
+                )
+            }
         }
 
         return packet
