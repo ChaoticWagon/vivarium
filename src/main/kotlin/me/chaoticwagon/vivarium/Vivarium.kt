@@ -2,6 +2,7 @@ package me.chaoticwagon.vivarium
 
 import me.chaoticwagon.vivarium.calendar.DayCycle
 import me.chaoticwagon.vivarium.calendar.TickCalendar
+import me.chaoticwagon.vivarium.commands.InfoCommand
 import me.chaoticwagon.vivarium.instance.GameInstance
 import net.minestom.server.MinecraftServer
 import net.minestom.server.coordinate.Pos
@@ -60,5 +61,6 @@ class Vivarium(private val minecraftServer: MinecraftServer) {
 
     private fun registerCommands() {
         val cmdManager = MinecraftServer.getCommandManager()
+        cmdManager.register(InfoCommand())
     }
 }
