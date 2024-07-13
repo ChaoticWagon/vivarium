@@ -66,10 +66,6 @@ class DayCycle(private val instance: InstanceContainer) {
 
         bossBar.color(BossBarUtil.getSeasonColor(calendar.get(Calendar.MONTH)))
 
-//        bossBar.progress(
-//            calendar.get(Calendar.DAY_OF_MONTH).toFloat() / calendar.getActualMaximum(Calendar.DAY_OF_MONTH).toFloat()
-//        )
-
         bossBar.progress(
             BossBarUtil.dateToSeconds(
                 calendar.get(Calendar.MONTH),
