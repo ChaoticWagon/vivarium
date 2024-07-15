@@ -1,8 +1,10 @@
 package me.chaoticwagon.vivarium.instance
 
+import net.minestom.server.MinecraftServer
 import net.minestom.server.instance.InstanceContainer
-import net.minestom.server.world.DimensionType
-import java.util.UUID
+import java.util.*
 
-class GameInstance(): InstanceContainer(UUID.randomUUID(), DimensionType.OVERWORLD) {
+class GameInstance(): InstanceContainer(UUID.randomUUID(),
+    MinecraftServer.getDimensionTypeRegistry().getKey(Dimension.NORMAL.type)!!
+) {
 }
